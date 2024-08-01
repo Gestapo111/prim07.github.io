@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación: Enlaces Químicos (Química)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Evaluación: Enlaces Químicos (Química)</h1>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button id="submit">Enviar respuestas</button>
+        <div id="results"></div>
+    </div>
+    <footer>
+        &copy; Derechos Reservados Prof. Alberto Sanchez
+    </footer>
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué es un enlace químico?",
+                answers: [
+                    { text: "Una fuerza que mantiene unidos a los átomos en una molécula.", correct: true },
+                    { text: "Una reacción que separa átomos.", correct: false },
+                    { text: "Una interacción entre protones y neutrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace covalente?",
+                answers: [
+                    { text: "Un enlace en el que dos átomos comparten uno o más pares de electrones.", correct: true },
+                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: false },
+                    { text: "Un enlace entre un metal y un no metal.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace iónico?",
+                answers: [
+                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: true },
+                    { text: "Un enlace en el que dos átomos comparten electrones.", correct: false },
+                    { text: "Un enlace entre dos no metales.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace metálico?",
+                answers: [
+                    { text: "Un enlace en el que los electrones se comparten libremente entre muchos átomos.", correct: true },
+                    { text: "Un enlace en el que dos átomos comparten un par de electrones.", correct: false },
+                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una molécula polar?",
+                answers: [
+                    { text: "Una molécula con una distribución desigual de cargas.", correct: true },
+                    { text: "Una molécula con una distribución uniforme de cargas.", correct: false },
+                    { text: "Una molécula con enlaces iónicos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una molécula no polar?",
+                answers: [
+                    { text: "Una molécula con una distribución uniforme de cargas.", correct: true },
+                    { text: "Una molécula con una distribución desigual de cargas.", correct: false },
+                    { text: "Una molécula con enlaces iónicos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la electronegatividad?",
+                answers: [
+                    { text: "La capacidad de un átomo para atraer electrones en un enlace químico.", correct: true },
+                    { text: "La cantidad de energía necesaria para eliminar un electrón de un átomo.", correct: false },
+                    { text: "La cantidad de energía liberada cuando un átomo gana un electrón.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un dipolo?",
+                answers: [
+                    { text: "Una separación de cargas en una molécula.", correct: true },
+                    { text: "Un ion con carga negativa.", correct: false },
+                    { text: "Un ion con carga positiva.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace doble?",
+                answers: [
+                    { text: "Un enlace en el que dos átomos comparten dos pares de electrones.", correct: true },
+                    { text: "Un enlace en el que dos átomos comparten un par de electrones.", correct: false },
+                    { text: "Un enlace en el que un átomo transfiere dos electrones a otro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace triple?",
+                answers: [
+                    { text: "Un enlace en el que dos átomos comparten tres pares de electrones.", correct: true },
+                    { text: "Un enlace en el que dos átomos comparten un par de electrones.", correct: false },
+                    { text: "Un enlace en el que un átomo transfiere tres electrones a otro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un catión?",
+                answers: [
+                    { text: "Un ion con carga positiva.", correct: true },
+                    { text: "Un ion con carga negativa.", correct: false },
+                    { text: "Un átomo neutro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un anión?",
+                answers: [
+                    { text: "Un ion con carga negativa.", correct: true },
+                    { text: "Un ion con carga positiva.", correct: false },
+                    { text: "Un átomo neutro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una red cristalina?",
+                answers: [
+                    { text: "Una estructura ordenada y repetitiva de átomos, iones o moléculas.", correct: true },
+                    { text: "Una estructura desordenada de átomos, iones o moléculas.", correct: false },
+                    { text: "Una estructura amorfa.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la energía de enlace?",
+                answers: [
+                    { text: "La cantidad de energía necesaria para romper un enlace químico.", correct: true },
+                    { text: "La cantidad de energía liberada al formar un enlace químico.", correct: false },
+                    { text: "La cantidad de energía necesaria para formar un enlace químico.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una molécula diatómica?",
+                answers: [
+                    { text: "Una molécula formada por dos átomos.", correct: true },
+                    { text: "Una molécula formada por tres átomos.", correct: false },
+                    { text: "Una molécula formada por un solo átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una molécula poliatómica?",
+                answers: [
+                    { text: "Una molécula formada por tres o más átomos.", correct: true },
+                    { text: "Una molécula formada por dos átomos.", correct: false },
+                    { text: "Una molécula formada por un solo átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la resonancia?",
+                answers: [
+                    { text: "La delocalización de electrones en moléculas con enlaces múltiples.", correct: true },
+                    { text: "La formación de un enlace químico.", correct: false },
+                    { text: "La transferencia de electrones entre átomos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la teoría de repulsión de pares de electrones de la capa de valencia (VSEPR)?",
+                answers: [
+                    { text: "Una teoría que predice la geometría molecular basada en la repulsión entre los pares de electrones de valencia.", correct: true },
+                    { text: "Una teoría que describe la transferencia de electrones entre átomos.", correct: false },
+                    { text: "Una teoría que describe la formación de enlaces covalentes.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una estructura de Lewis?",
+                answers: [
+                    { text: "Una representación gráfica de los enlaces y electrones de valencia en una molécula.", correct: true },
+                    { text: "Un modelo tridimensional de una molécula.", correct: false },
+                    { text: "Un diagrama que muestra la energía de enlace.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una hibridación?",
+                answers: [
+                    { text: "La mezcla de orbitales atómicos para formar nuevos orbitales híbridos.", correct: true },
+                    { text: "La transferencia de electrones entre átomos.", correct: false },
+                    { text: "La formación de enlaces covalentes.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace sigma?",
+                answers: [
+                    { text: "Un enlace formado por la superposición frontal de orbitales atómicos.", correct: true },
+                    { text: "Un enlace formado por la superposición lateral de orbitales atómicos.", correct: false },
+                    { text: "Un enlace formado por la delocalización de electrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace pi?",
+                answers: [
+                    { text: "Un enlace formado por la superposición lateral de orbitales atómicos.", correct: true },
+                    { text: "Un enlace formado por la superposición frontal de orbitales atómicos.", correct: false },
+                    { text: "Un enlace formado por la delocalización de electrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace coordinado?",
+                answers: [
+                    { text: "Un enlace en el que un átomo dona un par de electrones a otro átomo.", correct: true },
+                    { text: "Un enlace en el que dos átomos comparten electrones.", correct: false },
+                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una red metálica?",
+                answers: [
+                    { text: "Una estructura en la que los átomos metálicos comparten electrones deslocalizados.", correct: true },
+                    { text: "Una estructura en la que los átomos metálicos transfieren electrones a otros átomos.", correct: false },
+                    { text: "Una estructura en la que los átomos metálicos comparten electrones en enlaces covalentes.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una solución electrolítica?",
+                answers: [
+                    { text: "Una solución que conduce electricidad debido a la presencia de iones.", correct: true },
+                    { text: "Una solución que no conduce electricidad.", correct: false },
+                    { text: "Una solución que contiene solo moléculas neutras.", correct: false }
+                ]
+            }
+        ];
+
+        let attempt = 0;
+        const maxAttempts = 3;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+            quizData.forEach((data, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.className = 'question';
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.innerText = `${index + 1}. ${data.question}`;
+                questionContainer.appendChild(questionTitle);
+
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options';
+
+                shuffle(data.answers).forEach(answer => {
+                    const option = document.createElement('li');
+                    const optionLabel = document.createElement('label');
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question${index}`;
+                    optionInput.value = answer.correct;
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(document.createTextNode(answer.text));
+                    option.appendChild(optionLabel);
+                    optionsList.appendChild(option);
+                });
+
+                questionContainer.appendChild(optionsList);
+                quizContainer.appendChild(questionContainer);
+            });
+        }
+
+        function submitQuiz() {
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+                return;
+            }
+
+            const resultsContainer = document.getElementById('results');
+            const answers = document.querySelectorAll('input[type="radio"]:checked');
+            let score = 0;
+
+            quizData.forEach((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                if (selected === true) {
+                    score += 0.4; // Each correct answer is worth 0.4 points
+                }
+            });
+
+            score = Math.round(score * 10) / 10; // Round to one decimal place
+            let feedback = quizData.map((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                let result;
+                if (selected === null) {
+                    result = "No contestada";
+                } else if (selected === true) {
+                    result = "Correcta";
+                } else {
+                    result = "Incorrecta";
+                }
+                return `<p>${index + 1}. ${result}</p>`;
+            }).join("");
+
+            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+
+            attempt++;
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', submitQuiz);
+
+        loadQuiz();
+    </script>
+</body>
+</html>
