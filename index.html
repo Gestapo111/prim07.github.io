@@ -3,365 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación: Enlaces Químicos (Química)</title>
+    <title>Unidad 7: Enlaces Químicos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #333;
-        }
-        .quiz-container {
-            background-color: #fff;
             padding: 20px;
-            margin: 20px 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
+        }
+        h1, h2 {
+            text-align: center;
         }
         .question {
-            margin-bottom: 15px;
+            margin: 20px 0;
         }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
+        .question label {
+            font-weight: bold;
+            display: block;
             margin-bottom: 10px;
         }
-        button {
+        .question .options {
+            margin-left: 20px;
+        }
+        .question .options input {
+            margin-right: 10px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .popup-content input {
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .popup-content button {
+            padding: 15px 30px;
             background-color: #28a745;
             color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
-        }
-        #results {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        footer {
-            background-color: #333;
+        button.submit-btn {
+            padding: 15px 30px;
+            background-color: #007bff;
             color: #fff;
-            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
             width: 100%;
             text-align: center;
-            position: fixed;
-            bottom: 0;
+        }
+        button.submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #timer {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Evaluación: Enlaces Químicos (Química)</h1>
-    <div class="quiz-container">
-        <div id="quiz"></div>
-        <button id="submit">Enviar respuestas</button>
-        <div id="results"></div>
+
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <h2>Complete la siguiente información</h2>
+        <input type="text" id="nombre" placeholder="Nombre Completo" required>
+        <input type="text" id="nie" placeholder="NIE" required>
+        <button onclick="validatePopup()">Continuar</button>
     </div>
-    <footer>
-        &copy; Derechos Reservados Prof. Alberto Sanchez
-    </footer>
-    <script>
-        const quizData = [
-            {
-                question: "¿Qué es un enlace químico?",
-                answers: [
-                    { text: "Una fuerza que mantiene unidos a los átomos en una molécula.", correct: true },
-                    { text: "Una reacción que separa átomos.", correct: false },
-                    { text: "Una interacción entre protones y neutrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace covalente?",
-                answers: [
-                    { text: "Un enlace en el que dos átomos comparten uno o más pares de electrones.", correct: true },
-                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: false },
-                    { text: "Un enlace entre un metal y un no metal.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace iónico?",
-                answers: [
-                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: true },
-                    { text: "Un enlace en el que dos átomos comparten electrones.", correct: false },
-                    { text: "Un enlace entre dos no metales.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace metálico?",
-                answers: [
-                    { text: "Un enlace en el que los electrones se comparten libremente entre muchos átomos.", correct: true },
-                    { text: "Un enlace en el que dos átomos comparten un par de electrones.", correct: false },
-                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una molécula polar?",
-                answers: [
-                    { text: "Una molécula con una distribución desigual de cargas.", correct: true },
-                    { text: "Una molécula con una distribución uniforme de cargas.", correct: false },
-                    { text: "Una molécula con enlaces iónicos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una molécula no polar?",
-                answers: [
-                    { text: "Una molécula con una distribución uniforme de cargas.", correct: true },
-                    { text: "Una molécula con una distribución desigual de cargas.", correct: false },
-                    { text: "Una molécula con enlaces iónicos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la electronegatividad?",
-                answers: [
-                    { text: "La capacidad de un átomo para atraer electrones en un enlace químico.", correct: true },
-                    { text: "La cantidad de energía necesaria para eliminar un electrón de un átomo.", correct: false },
-                    { text: "La cantidad de energía liberada cuando un átomo gana un electrón.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un dipolo?",
-                answers: [
-                    { text: "Una separación de cargas en una molécula.", correct: true },
-                    { text: "Un ion con carga negativa.", correct: false },
-                    { text: "Un ion con carga positiva.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace doble?",
-                answers: [
-                    { text: "Un enlace en el que dos átomos comparten dos pares de electrones.", correct: true },
-                    { text: "Un enlace en el que dos átomos comparten un par de electrones.", correct: false },
-                    { text: "Un enlace en el que un átomo transfiere dos electrones a otro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace triple?",
-                answers: [
-                    { text: "Un enlace en el que dos átomos comparten tres pares de electrones.", correct: true },
-                    { text: "Un enlace en el que dos átomos comparten un par de electrones.", correct: false },
-                    { text: "Un enlace en el que un átomo transfiere tres electrones a otro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un catión?",
-                answers: [
-                    { text: "Un ion con carga positiva.", correct: true },
-                    { text: "Un ion con carga negativa.", correct: false },
-                    { text: "Un átomo neutro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un anión?",
-                answers: [
-                    { text: "Un ion con carga negativa.", correct: true },
-                    { text: "Un ion con carga positiva.", correct: false },
-                    { text: "Un átomo neutro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una red cristalina?",
-                answers: [
-                    { text: "Una estructura ordenada y repetitiva de átomos, iones o moléculas.", correct: true },
-                    { text: "Una estructura desordenada de átomos, iones o moléculas.", correct: false },
-                    { text: "Una estructura amorfa.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la energía de enlace?",
-                answers: [
-                    { text: "La cantidad de energía necesaria para romper un enlace químico.", correct: true },
-                    { text: "La cantidad de energía liberada al formar un enlace químico.", correct: false },
-                    { text: "La cantidad de energía necesaria para formar un enlace químico.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una molécula diatómica?",
-                answers: [
-                    { text: "Una molécula formada por dos átomos.", correct: true },
-                    { text: "Una molécula formada por tres átomos.", correct: false },
-                    { text: "Una molécula formada por un solo átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una molécula poliatómica?",
-                answers: [
-                    { text: "Una molécula formada por tres o más átomos.", correct: true },
-                    { text: "Una molécula formada por dos átomos.", correct: false },
-                    { text: "Una molécula formada por un solo átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la resonancia?",
-                answers: [
-                    { text: "La delocalización de electrones en moléculas con enlaces múltiples.", correct: true },
-                    { text: "La formación de un enlace químico.", correct: false },
-                    { text: "La transferencia de electrones entre átomos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la teoría de repulsión de pares de electrones de la capa de valencia (VSEPR)?",
-                answers: [
-                    { text: "Una teoría que predice la geometría molecular basada en la repulsión entre los pares de electrones de valencia.", correct: true },
-                    { text: "Una teoría que describe la transferencia de electrones entre átomos.", correct: false },
-                    { text: "Una teoría que describe la formación de enlaces covalentes.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una estructura de Lewis?",
-                answers: [
-                    { text: "Una representación gráfica de los enlaces y electrones de valencia en una molécula.", correct: true },
-                    { text: "Un modelo tridimensional de una molécula.", correct: false },
-                    { text: "Un diagrama que muestra la energía de enlace.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una hibridación?",
-                answers: [
-                    { text: "La mezcla de orbitales atómicos para formar nuevos orbitales híbridos.", correct: true },
-                    { text: "La transferencia de electrones entre átomos.", correct: false },
-                    { text: "La formación de enlaces covalentes.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace sigma?",
-                answers: [
-                    { text: "Un enlace formado por la superposición frontal de orbitales atómicos.", correct: true },
-                    { text: "Un enlace formado por la superposición lateral de orbitales atómicos.", correct: false },
-                    { text: "Un enlace formado por la delocalización de electrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace pi?",
-                answers: [
-                    { text: "Un enlace formado por la superposición lateral de orbitales atómicos.", correct: true },
-                    { text: "Un enlace formado por la superposición frontal de orbitales atómicos.", correct: false },
-                    { text: "Un enlace formado por la delocalización de electrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace coordinado?",
-                answers: [
-                    { text: "Un enlace en el que un átomo dona un par de electrones a otro átomo.", correct: true },
-                    { text: "Un enlace en el que dos átomos comparten electrones.", correct: false },
-                    { text: "Un enlace en el que un átomo transfiere electrones a otro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una red metálica?",
-                answers: [
-                    { text: "Una estructura en la que los átomos metálicos comparten electrones deslocalizados.", correct: true },
-                    { text: "Una estructura en la que los átomos metálicos transfieren electrones a otros átomos.", correct: false },
-                    { text: "Una estructura en la que los átomos metálicos comparten electrones en enlaces covalentes.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una solución electrolítica?",
-                answers: [
-                    { text: "Una solución que conduce electricidad debido a la presencia de iones.", correct: true },
-                    { text: "Una solución que no conduce electricidad.", correct: false },
-                    { text: "Una solución que contiene solo moléculas neutras.", correct: false }
-                ]
-            }
-        ];
+</div>
 
-        let attempt = 0;
-        const maxAttempts = 3;
+<div class="container" id="evaluation" style="display:none;">
+    <h1>Unidad 7: Enlaces Químicos</h1>
+    <div id="timer">Tiempo restante: 30:00</div>
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+    <!-- Indicador 7.1 -->
+    <h2>Indicador 7.1: Identificación de electrones de valencia</h2>
+    <div class="question">
+        <label>1. ¿Qué son los electrones de valencia?</label>
+        <div class="options">
+            <label><input type="radio" name="q1" value="correcto" required> A. Electrones en la capa más externa de un átomo.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> B. Electrones en la capa más interna de un átomo.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> C. Electrones que se encuentran en el núcleo.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> D. Electrones que siempre se comparten entre átomos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>2. ¿Cuál de los siguientes elementos tiene un electrón de valencia?</label>
+        <div class="options">
+            <label><input type="radio" name="q2" value="correcto" required> A. Hidrógeno (H).</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> B. Helio (He).</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> C. Oxígeno (O).</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> D. Carbono (C).</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>3. ¿Qué representa el punto en una estructura de Lewis?</label>
+        <div class="options">
+            <label><input type="radio" name="q3" value="correcto" required> A. Un electrón de valencia.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> B. Un par de electrones compartidos.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> C. Un enlace iónico.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> D. Un protón en el núcleo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>4. ¿Cómo se identifican los electrones de valencia en un átomo del grupo 17 de la tabla periódica?</label>
+        <div class="options">
+            <label><input type="radio" name="q4" value="correcto" required> A. Tienen siete electrones en la capa más externa.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> B. Tienen dos electrones en la capa más externa.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> C. Tienen un electrón en la capa más externa.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> D. Tienen tres electrones en la capa más externa.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>5. ¿Qué elemento tiene dos electrones de valencia?</label>
+        <div class="options">
+            <label><input type="radio" name="q5" value="correcto" required> A. Magnesio (Mg).</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> B. Sodio (Na).</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> C. Cloro (Cl).</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> D. Boro (B).</label>
+        </div>
+    </div>
+
+    <!-- Indicador 7.2 -->
+    <h2>Indicador 7.2: Tipos de enlaces químicos</h2>
+    <div class="question">
+        <label>6. ¿Qué tipo de enlace se forma entre un metal y un no metal?</label>
+        <div class="options">
+            <label><input type="radio" name="q6" value="correcto" required> A. Enlace iónico.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> B. Enlace covalente.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> C. Enlace metálico.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> D. Enlace de hidrógeno.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>7. ¿Qué caracteriza a un enlace covalente?</label>
+        <div class="options">
+            <label><input type="radio" name="q7" value="correcto" required> A. Los átomos comparten electrones.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> B. Los átomos transfieren electrones completamente.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> C. Los electrones se desplazan libremente entre átomos.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> D. Los átomos se unen por fuerzas de van der Waals.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>8. ¿Qué propiedad es típica de los compuestos iónicos?</label>
+        <div class="options">
+            <label><input type="radio" name="q8" value="correcto" required> A. Alta conductividad eléctrica en solución acuosa.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> B. Baja temperatura de fusión.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> C. Flexibilidad en estado sólido.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> D. Poca solubilidad en agua.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>9. ¿Qué tipo de enlace existe en un trozo de hierro (Fe)?</label>
+        <div class="options">
+            <label><input type="radio" name="q9" value="correcto" required> A. Enlace metálico.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> B. Enlace iónico.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> C. Enlace covalente.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> D. Enlace de hidrógeno.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>10. ¿Qué sucede en un enlace iónico?</label>
+        <div class="options">
+            <label><input type="radio" name="q10" value="correcto" required> A. Un átomo dona electrones y otro los recibe.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> B. Los átomos comparten electrones de forma equitativa.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> C. Los átomos comparten electrones de forma desigual.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> D. Los electrones se mueven libremente entre átomos.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 7.3 -->
+    <h2>Indicador 7.3: Diferencias entre compuestos orgánicos e inorgánicos</h2>
+    <div class="question">
+        <label>11. ¿Qué elemento es fundamental en todos los compuestos orgánicos?</label>
+        <div class="options">
+            <label><input type="radio" name="q11" value="correcto" required> A. Carbono.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> B. Hidrógeno.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> C. Oxígeno.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> D. Nitrógeno.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>12. ¿Qué distingue a un compuesto inorgánico?</label>
+        <div class="options">
+            <label><input type="radio" name="q12" value="correcto" required> A. No necesariamente contiene carbono.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> B. Siempre contiene carbono.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> C. Es de origen biológico.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> D. Solo contiene elementos no metálicos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>13. ¿Qué tipo de compuesto es el metano (CH₄)?</label>
+        <div class="options">
+            <label><input type="radio" name="q13" value="correcto" required> A. Orgánico.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> B. Inorgánico.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> C. Ácido.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> D. Sal.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>14. ¿Cuál es una característica típica de los compuestos orgánicos?</label>
+        <div class="options">
+            <label><input type="radio" name="q14" value="correcto" required> A. Contienen enlaces carbono-hidrógeno.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> B. Siempre son solubles en agua.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> C. Son principalmente de origen mineral.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> D. No contienen oxígeno.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>15. ¿Cuál de los siguientes es un compuesto inorgánico?</label>
+        <div class="options">
+            <label><input type="radio" name="q15" value="correcto" required> A. Cloruro de sodio (NaCl).</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> B. Etanol (C₂H₅OH).</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> C. Glucosa (C₆H₁₂O₆).</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> D. Benceno (C₆H₆).</label>
+        </div>
+    </div>
+
+    <!-- Indicador 7.4 -->
+    <h2>Indicador 7.4: Compuestos químicos inorgánicos</h2>
+    <div class="question">
+        <label>16. ¿Qué es un óxido?</label>
+        <div class="options">
+            <label><input type="radio" name="q16" value="correcto" required> A. Un compuesto formado por oxígeno y otro elemento.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> B. Un compuesto formado por hidrógeno y un metal.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> C. Un compuesto que solo contiene oxígeno.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> D. Un compuesto formado por oxígeno y un no metal.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>17. ¿Qué tipo de compuesto es el hidruro de sodio (NaH)?</label>
+        <div class="options">
+            <label><input type="radio" name="q17" value="correcto" required> A. Hidruro metálico.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> B. Óxido no metálico.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> C. Hidruro no metálico.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> D. Óxido ácido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>18. ¿Qué caracteriza a un óxido ácido?</label>
+        <div class="options">
+            <label><input type="radio" name="q18" value="correcto" required> A. Reacciona con agua para formar un ácido.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> B. Reacciona con agua para formar una base.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> C. Reacciona con ácidos para formar sales.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> D. Reacciona con bases para formar ácidos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>19. ¿Qué tipo de compuesto se forma al reaccionar un óxido básico con agua?</label>
+        <div class="options">
+            <label><input type="radio" name="q19" value="correcto" required> A. Una base.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> B. Un ácido.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> C. Una sal.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> D. Un hidruro.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>20. ¿Qué es un hidruro no metálico?</label>
+        <div class="options">
+            <label><input type="radio" name="q20" value="correcto" required> A. Un compuesto formado por hidrógeno y un no metal.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> B. Un compuesto formado por oxígeno y un metal.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> C. Un compuesto formado por hidrógeno y un metal.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> D. Un compuesto formado por oxígeno y un no metal.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 7.5 -->
+    <h2>Indicador 7.5: Combinaciones químicas y compuestos ternarios</h2>
+    <div class="question">
+        <label>21. ¿Qué caracteriza a un ácido?</label>
+        <div class="options">
+            <label><input type="radio" name="q21" value="correcto" required> A. Libera iones H+ en solución acuosa.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> B. Libera iones OH- en solución acuosa.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> C. Es insoluble en agua.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> D. Tiene un pH mayor a 7.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>22. ¿Qué tipo de compuesto es el hidróxido de sodio (NaOH)?</label>
+        <div class="options">
+            <label><input type="radio" name="q22" value="correcto" required> A. Una base.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> B. Un ácido.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> C. Una sal.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> D. Un óxido ácido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>23. ¿Qué se forma al reaccionar un ácido con una base?</label>
+        <div class="options">
+            <label><input type="radio" name="q23" value="correcto" required> A. Una sal y agua.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> B. Un óxido.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> C. Un hidruro y agua.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> D. Un ácido fuerte.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>24. ¿Qué caracteriza a una base?</label>
+        <div class="options">
+            <label><input type="radio" name="q24" value="correcto" required> A. Libera iones OH- en solución acuosa.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> B. Libera iones H+ en solución acuosa.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> C. Tiene un pH menor a 7.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> D. Es insoluble en agua.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>25. ¿Cuál de los siguientes es un compuesto ternario?</label>
+        <div class="options">
+            <label><input type="radio" name="q25" value="correcto" required> A. Ácido sulfúrico (H₂SO₄).</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> B. Cloruro de sodio (NaCl).</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> C. Hidróxido de sodio (NaOH).</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> D. Óxido de calcio (CaO).</label>
+        </div>
+    </div>
+
+    <!-- Indicador 7.6 -->
+    <h2>Indicador 7.6: Nomenclatura y propiedades de compuestos inorgánicos</h2>
+    <div class="question">
+        <label>26. ¿Qué es un óxido básico?</label>
+        <div class="options">
+            <label><input type="radio" name="q26" value="correcto" required> A. Un compuesto formado por un metal y oxígeno.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> B. Un compuesto formado por un no metal y oxígeno.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> C. Un compuesto que reacciona con ácidos para formar agua.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> D. Un compuesto que reacciona con bases para formar sales.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>27. ¿Qué tipo de compuesto es el anhídrido carbónico (CO₂)?</label>
+        <div class="options">
+            <label><input type="radio" name="q27" value="correcto" required> A. Óxido ácido.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> B. Óxido básico.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> C. Hidruro metálico.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> D. Sal haloidea.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>28. ¿Qué es una sal haloidea?</label>
+        <div class="options">
+            <label><input type="radio" name="q28" value="correcto" required> A. Una sal formada por la reacción de un ácido haloideo con una base.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> B. Una sal formada por la reacción de un óxido con agua.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> C. Una sal formada por la reacción de un hidruro metálico con un ácido.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> D. Una sal formada por la reacción de un óxido básico con un óxido ácido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>29. ¿Qué compuesto se forma al reaccionar un hidruro no metálico con agua?</label>
+        <div class="options">
+            <label><input type="radio" name="q29" value="correcto" required> A. Un ácido.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> B. Una base.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> C. Una sal.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> D. Un óxido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>30. ¿Qué es un hidruro metálico?</label>
+        <div class="options">
+            <label><input type="radio" name="q30" value="correcto" required> A. Un compuesto formado por un metal y hidrógeno.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> B. Un compuesto formado por un no metal y oxígeno.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> C. Un compuesto formado por un no metal y hidrógeno.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> D. Un compuesto formado por un metal y oxígeno.</label>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="calculateGrade()">Obtener Calificación</button>
+</div>
+
+<div class="popup" id="finalPopup" style="display: none;">
+    <div class="popup-content">
+        <h2>Resultado de la Evaluación</h2>
+        <p id="nombreFinal"></p>
+        <p id="nieFinal"></p>
+        <p id="gradeFinal"></p>
+        <button onclick="closePopup()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+    const authorizedNIEs = [
+        "4839280", "19711634", "4839293", "6297544", "19711644",
+        "3850927", "19711635", "4267835", "3293986", "19711278",
+        "19711637", "4267839", "19806177", "4839298", "4267832",
+        "4267843", "4839279", "4839301", "19964688"
+    ];
+
+    let timer;
+    let totalSeconds = 1800;
+
+    window.onload = function() {
+        document.getElementById('popup').style.display = 'flex';
+    };
+
+    function validatePopup() {
+        const nombre = document.getElementById('nombre').value;
+        const nie = document.getElementById('nie').value;
+
+        if (nombre === "" || nie === "") {
+            alert("Por favor, complete todos los campos.");
+        } else if (!authorizedNIEs.includes(nie)) {
+            alert("NIE no autorizado.");
+        } else {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('evaluation').style.display = 'block';
+            startTimer();
         }
+    }
 
-        function loadQuiz() {
-            const quizContainer = document.getElementById('quiz');
-            quizContainer.innerHTML = '';
-            quizData.forEach((data, index) => {
-                const questionContainer = document.createElement('div');
-                questionContainer.className = 'question';
+    function startTimer() {
+        timer = setInterval(function() {
+            totalSeconds--;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('timer').textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-                const questionTitle = document.createElement('h3');
-                questionTitle.innerText = `${index + 1}. ${data.question}`;
-                questionContainer.appendChild(questionTitle);
-
-                const optionsList = document.createElement('ul');
-                optionsList.className = 'options';
-
-                shuffle(data.answers).forEach(answer => {
-                    const option = document.createElement('li');
-                    const optionLabel = document.createElement('label');
-                    const optionInput = document.createElement('input');
-                    optionInput.type = 'radio';
-                    optionInput.name = `question${index}`;
-                    optionInput.value = answer.correct;
-                    optionLabel.appendChild(optionInput);
-                    optionLabel.appendChild(document.createTextNode(answer.text));
-                    option.appendChild(optionLabel);
-                    optionsList.appendChild(option);
-                });
-
-                questionContainer.appendChild(optionsList);
-                quizContainer.appendChild(questionContainer);
-            });
-        }
-
-        function submitQuiz() {
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-                return;
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                calculateGrade();
             }
+        }, 1000);
+    }
 
-            const resultsContainer = document.getElementById('results');
-            const answers = document.querySelectorAll('input[type="radio"]:checked');
-            let score = 0;
+    function calculateGrade() {
+        const totalQuestions = document.querySelectorAll('.question').length;
+        const correctAnswers = document.querySelectorAll('input[type="radio"]:checked[value="correcto"]').length;
+        const maxPoints = 10;
+        const grade = (correctAnswers / totalQuestions) * maxPoints;
 
-            quizData.forEach((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                if (selected === true) {
-                    score += 0.4; // Each correct answer is worth 0.4 points
-                }
-            });
+        document.getElementById('nombreFinal').textContent = "Nombre: " + document.getElementById('nombre').value;
+        document.getElementById('nieFinal').textContent = "NIE: " + document.getElementById('nie').value;
+        document.getElementById('gradeFinal').textContent = "Su calificación es: " + grade.toFixed(2) + " de " + maxPoints;
 
-            score = Math.round(score * 10) / 10; // Round to one decimal place
-            let feedback = quizData.map((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                let result;
-                if (selected === null) {
-                    result = "No contestada";
-                } else if (selected === true) {
-                    result = "Correcta";
-                } else {
-                    result = "Incorrecta";
-                }
-                return `<p>${index + 1}. ${result}</p>`;
-            }).join("");
+        document.getElementById('finalPopup').style.display = 'flex';
+    }
 
-            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+    function closePopup() {
+        document.getElementById('finalPopup').style.display = 'none';
+    }
+</script>
 
-            attempt++;
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-            }
-        }
-
-        document.getElementById('submit').addEventListener('click', submitQuiz);
-
-        loadQuiz();
-    </script>
 </body>
 </html>
